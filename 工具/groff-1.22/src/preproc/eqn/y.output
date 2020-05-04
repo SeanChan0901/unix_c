@@ -1,0 +1,2965 @@
+Terminals which are not used
+
+   SPACE
+   GFONT
+   GSIZE
+   DEFINE
+   NDEFINE
+   TDEFINE
+   SDEFINE
+   UNDEF
+   IFDEF
+   INCLUDE
+   DELIM
+   CHARTYPE
+   SET
+   GRFONT
+   GBFONT
+
+
+Grammar
+
+    0 $accept: top $end
+
+    1 top: /* empty */
+    2    | equation
+
+    3 equation: mark
+    4         | equation mark
+
+    5 mark: from_to
+    6     | MARK mark
+    7     | LINEUP mark
+
+    8 from_to: sqrt_over
+    9        | sqrt_over TO from_to
+   10        | sqrt_over FROM sqrt_over
+   11        | sqrt_over FROM sqrt_over TO from_to
+   12        | sqrt_over FROM sqrt_over FROM from_to
+
+   13 sqrt_over: script
+   14          | SQRT sqrt_over
+   15          | sqrt_over OVER sqrt_over
+   16          | sqrt_over SMALLOVER sqrt_over
+
+   17 script: nonsup
+   18       | simple SUP script
+
+   19 nonsup: simple
+   20       | simple SUB nonsup
+   21       | simple SUB simple SUP script
+
+   22 simple: TEXT
+   23       | QUOTED_TEXT
+   24       | SPLIT QUOTED_TEXT
+   25       | NOSPLIT TEXT
+   26       | '^'
+   27       | '~'
+   28       | '\t'
+   29       | '{' equation '}'
+   30       | PILE pile_arg
+   31       | LPILE pile_arg
+   32       | RPILE pile_arg
+   33       | CPILE pile_arg
+   34       | MATRIX '{' column_list '}'
+   35       | LEFT delim equation RIGHT delim
+   36       | LEFT delim equation
+   37       | simple BAR
+   38       | simple UNDER
+   39       | simple PRIME
+   40       | simple ACCENT simple
+   41       | simple UACCENT simple
+   42       | ROMAN simple
+   43       | BOLD simple
+   44       | ITALIC simple
+   45       | FAT simple
+   46       | FONT text simple
+   47       | SIZE text simple
+   48       | FWD number simple
+   49       | BACK number simple
+   50       | UP number simple
+   51       | DOWN number simple
+   52       | TYPE text simple
+   53       | VCENTER simple
+   54       | SPECIAL text simple
+
+   55 number: text
+
+   56 pile_element_list: equation
+   57                  | pile_element_list ABOVE equation
+
+   58 pile_arg: '{' pile_element_list '}'
+   59         | number '{' pile_element_list '}'
+
+   60 column_list: column
+   61            | column_list column
+
+   62 column_element_list: equation
+   63                    | column_element_list ABOVE equation
+
+   64 column_arg: '{' column_element_list '}'
+   65           | number '{' column_element_list '}'
+
+   66 column: COL column_arg
+   67       | LCOL column_arg
+   68       | RCOL column_arg
+   69       | CCOL column_arg
+
+   70 text: TEXT
+   71     | QUOTED_TEXT
+
+   72 delim: text
+   73      | '{'
+   74      | '}'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'\t' (9) 28
+'^' (94) 26
+'{' (123) 29 34 58 59 64 65 73
+'}' (125) 29 34 58 59 64 65 74
+'~' (126) 27
+error (256)
+OVER (258) 15
+SMALLOVER (259) 16
+SQRT (260) 14
+SUB (261) 20 21
+SUP (262) 18 21
+LPILE (263) 31
+RPILE (264) 32
+CPILE (265) 33
+PILE (266) 30
+LEFT (267) 35 36
+RIGHT (268) 35
+TO (269) 9 11
+FROM (270) 10 11 12
+SIZE (271) 47
+FONT (272) 46
+ROMAN (273) 42
+BOLD (274) 43
+ITALIC (275) 44
+FAT (276) 45
+ACCENT (277) 40
+BAR (278) 37
+UNDER (279) 38
+ABOVE (280) 57 63
+TEXT (281) 22 25 70
+QUOTED_TEXT (282) 23 24 71
+FWD (283) 48
+BACK (284) 49
+DOWN (285) 51
+UP (286) 50
+MATRIX (287) 34
+COL (288) 66
+LCOL (289) 67
+RCOL (290) 68
+CCOL (291) 69
+MARK (292) 6
+LINEUP (293) 7
+TYPE (294) 52
+VCENTER (295) 53
+PRIME (296) 39
+SPLIT (297) 24
+NOSPLIT (298) 25
+UACCENT (299) 41
+SPECIAL (300) 54
+SPACE (301)
+GFONT (302)
+GSIZE (303)
+DEFINE (304)
+NDEFINE (305)
+TDEFINE (306)
+SDEFINE (307)
+UNDEF (308)
+IFDEF (309)
+INCLUDE (310)
+DELIM (311)
+CHARTYPE (312)
+SET (313)
+GRFONT (314)
+GBFONT (315)
+
+
+Nonterminals, with rules where they appear
+
+$accept (66)
+    on left: 0
+top (67)
+    on left: 1 2, on right: 0
+equation (68)
+    on left: 3 4, on right: 2 4 29 35 36 56 57 62 63
+mark (69)
+    on left: 5 6 7, on right: 3 4 6 7
+from_to (70)
+    on left: 8 9 10 11 12, on right: 5 9 11 12
+sqrt_over (71)
+    on left: 13 14 15 16, on right: 8 9 10 11 12 14 15 16
+script (72)
+    on left: 17 18, on right: 13 18 21
+nonsup (73)
+    on left: 19 20 21, on right: 17 20
+simple (74)
+    on left: 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
+    40 41 42 43 44 45 46 47 48 49 50 51 52 53 54, on right: 18 19 20
+    21 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54
+number (75)
+    on left: 55, on right: 48 49 50 51 59 65
+pile_element_list (76)
+    on left: 56 57, on right: 57 58 59
+pile_arg (77)
+    on left: 58 59, on right: 30 31 32 33
+column_list (78)
+    on left: 60 61, on right: 34 61
+column_element_list (79)
+    on left: 62 63, on right: 63 64 65
+column_arg (80)
+    on left: 64 65, on right: 66 67 68 69
+column (81)
+    on left: 66 67 68 69, on right: 60 61
+text (82)
+    on left: 70 71, on right: 46 47 52 54 55 72
+delim (83)
+    on left: 72 73 74, on right: 35 36
+
+
+state 0
+
+    0 $accept: . top $end
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    $default  reduce using rule 1 (top)
+
+    top        go to state 31
+    equation   go to state 32
+    mark       go to state 33
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 1
+
+   14 sqrt_over: SQRT . sqrt_over
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    sqrt_over  go to state 39
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 2
+
+   31 simple: LPILE . pile_arg
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 42
+
+    number    go to state 43
+    pile_arg  go to state 44
+    text      go to state 45
+
+
+state 3
+
+   32 simple: RPILE . pile_arg
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 42
+
+    number    go to state 43
+    pile_arg  go to state 46
+    text      go to state 45
+
+
+state 4
+
+   33 simple: CPILE . pile_arg
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 42
+
+    number    go to state 43
+    pile_arg  go to state 47
+    text      go to state 45
+
+
+state 5
+
+   30 simple: PILE . pile_arg
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 42
+
+    number    go to state 43
+    pile_arg  go to state 48
+    text      go to state 45
+
+
+state 6
+
+   35 simple: LEFT . delim equation RIGHT delim
+   36       | LEFT . delim equation
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 49
+    '}'          shift, and go to state 50
+
+    text   go to state 51
+    delim  go to state 52
+
+
+state 7
+
+   47 simple: SIZE . text simple
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+
+    text  go to state 53
+
+
+state 8
+
+   46 simple: FONT . text simple
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+
+    text  go to state 54
+
+
+state 9
+
+   42 simple: ROMAN . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 55
+
+
+state 10
+
+   43 simple: BOLD . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 56
+
+
+state 11
+
+   44 simple: ITALIC . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 57
+
+
+state 12
+
+   45 simple: FAT . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 58
+
+
+state 13
+
+   22 simple: TEXT .
+
+    $default  reduce using rule 22 (simple)
+
+
+state 14
+
+   23 simple: QUOTED_TEXT .
+
+    $default  reduce using rule 23 (simple)
+
+
+state 15
+
+   48 simple: FWD . number simple
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+
+    number  go to state 59
+    text    go to state 45
+
+
+state 16
+
+   49 simple: BACK . number simple
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+
+    number  go to state 60
+    text    go to state 45
+
+
+state 17
+
+   51 simple: DOWN . number simple
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+
+    number  go to state 61
+    text    go to state 45
+
+
+state 18
+
+   50 simple: UP . number simple
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+
+    number  go to state 62
+    text    go to state 45
+
+
+state 19
+
+   34 simple: MATRIX . '{' column_list '}'
+
+    '{'  shift, and go to state 63
+
+
+state 20
+
+    6 mark: MARK . mark
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    mark       go to state 64
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 21
+
+    7 mark: LINEUP . mark
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    mark       go to state 65
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 22
+
+   52 simple: TYPE . text simple
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+
+    text  go to state 66
+
+
+state 23
+
+   53 simple: VCENTER . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 67
+
+
+state 24
+
+   24 simple: SPLIT . QUOTED_TEXT
+
+    QUOTED_TEXT  shift, and go to state 68
+
+
+state 25
+
+   25 simple: NOSPLIT . TEXT
+
+    TEXT  shift, and go to state 69
+
+
+state 26
+
+   54 simple: SPECIAL . text simple
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+
+    text  go to state 70
+
+
+state 27
+
+   26 simple: '^' .
+
+    $default  reduce using rule 26 (simple)
+
+
+state 28
+
+   27 simple: '~' .
+
+    $default  reduce using rule 27 (simple)
+
+
+state 29
+
+   28 simple: '\t' .
+
+    $default  reduce using rule 28 (simple)
+
+
+state 30
+
+   29 simple: '{' . equation '}'
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    equation   go to state 71
+    mark       go to state 33
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 31
+
+    0 $accept: top . $end
+
+    $end  shift, and go to state 72
+
+
+state 32
+
+    2 top: equation .
+    4 equation: equation . mark
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    $default  reduce using rule 2 (top)
+
+    mark       go to state 73
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 33
+
+    3 equation: mark .
+
+    $default  reduce using rule 3 (equation)
+
+
+state 34
+
+    5 mark: from_to .
+
+    $default  reduce using rule 5 (mark)
+
+
+state 35
+
+    8 from_to: sqrt_over .
+    9        | sqrt_over . TO from_to
+   10        | sqrt_over . FROM sqrt_over
+   11        | sqrt_over . FROM sqrt_over TO from_to
+   12        | sqrt_over . FROM sqrt_over FROM from_to
+   15 sqrt_over: sqrt_over . OVER sqrt_over
+   16          | sqrt_over . SMALLOVER sqrt_over
+
+    OVER       shift, and go to state 74
+    SMALLOVER  shift, and go to state 75
+    TO         shift, and go to state 76
+    FROM       shift, and go to state 77
+
+    $default  reduce using rule 8 (from_to)
+
+
+state 36
+
+   13 sqrt_over: script .
+
+    $default  reduce using rule 13 (sqrt_over)
+
+
+state 37
+
+   17 script: nonsup .
+
+    $default  reduce using rule 17 (script)
+
+
+state 38
+
+   18 script: simple . SUP script
+   19 nonsup: simple .
+   20       | simple . SUB nonsup
+   21       | simple . SUB simple SUP script
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+
+    SUB      shift, and go to state 78
+    SUP      shift, and go to state 79
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 19 (nonsup)
+
+
+state 39
+
+   14 sqrt_over: SQRT sqrt_over .
+   15          | sqrt_over . OVER sqrt_over
+   16          | sqrt_over . SMALLOVER sqrt_over
+
+    $default  reduce using rule 14 (sqrt_over)
+
+
+state 40
+
+   70 text: TEXT .
+
+    $default  reduce using rule 70 (text)
+
+
+state 41
+
+   71 text: QUOTED_TEXT .
+
+    $default  reduce using rule 71 (text)
+
+
+state 42
+
+   58 pile_arg: '{' . pile_element_list '}'
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    equation           go to state 85
+    mark               go to state 33
+    from_to            go to state 34
+    sqrt_over          go to state 35
+    script             go to state 36
+    nonsup             go to state 37
+    simple             go to state 38
+    pile_element_list  go to state 86
+
+
+state 43
+
+   59 pile_arg: number . '{' pile_element_list '}'
+
+    '{'  shift, and go to state 87
+
+
+state 44
+
+   31 simple: LPILE pile_arg .
+
+    $default  reduce using rule 31 (simple)
+
+
+state 45
+
+   55 number: text .
+
+    $default  reduce using rule 55 (number)
+
+
+state 46
+
+   32 simple: RPILE pile_arg .
+
+    $default  reduce using rule 32 (simple)
+
+
+state 47
+
+   33 simple: CPILE pile_arg .
+
+    $default  reduce using rule 33 (simple)
+
+
+state 48
+
+   30 simple: PILE pile_arg .
+
+    $default  reduce using rule 30 (simple)
+
+
+state 49
+
+   73 delim: '{' .
+
+    $default  reduce using rule 73 (delim)
+
+
+state 50
+
+   74 delim: '}' .
+
+    $default  reduce using rule 74 (delim)
+
+
+state 51
+
+   72 delim: text .
+
+    $default  reduce using rule 72 (delim)
+
+
+state 52
+
+   35 simple: LEFT delim . equation RIGHT delim
+   36       | LEFT delim . equation
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    equation   go to state 88
+    mark       go to state 33
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 53
+
+   47 simple: SIZE text . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 89
+
+
+state 54
+
+   46 simple: FONT text . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 90
+
+
+state 55
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   42       | ROMAN simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 42 (simple)
+
+
+state 56
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   43       | BOLD simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 43 (simple)
+
+
+state 57
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   44       | ITALIC simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 44 (simple)
+
+
+state 58
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   45       | FAT simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 45 (simple)
+
+
+state 59
+
+   48 simple: FWD number . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 91
+
+
+state 60
+
+   49 simple: BACK number . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 92
+
+
+state 61
+
+   51 simple: DOWN number . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 93
+
+
+state 62
+
+   50 simple: UP number . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 94
+
+
+state 63
+
+   34 simple: MATRIX '{' . column_list '}'
+
+    COL   shift, and go to state 95
+    LCOL  shift, and go to state 96
+    RCOL  shift, and go to state 97
+    CCOL  shift, and go to state 98
+
+    column_list  go to state 99
+    column       go to state 100
+
+
+state 64
+
+    6 mark: MARK mark .
+
+    $default  reduce using rule 6 (mark)
+
+
+state 65
+
+    7 mark: LINEUP mark .
+
+    $default  reduce using rule 7 (mark)
+
+
+state 66
+
+   52 simple: TYPE text . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 101
+
+
+state 67
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   53       | VCENTER simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 53 (simple)
+
+
+state 68
+
+   24 simple: SPLIT QUOTED_TEXT .
+
+    $default  reduce using rule 24 (simple)
+
+
+state 69
+
+   25 simple: NOSPLIT TEXT .
+
+    $default  reduce using rule 25 (simple)
+
+
+state 70
+
+   54 simple: SPECIAL text . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 102
+
+
+state 71
+
+    4 equation: equation . mark
+   29 simple: '{' equation . '}'
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+    '}'          shift, and go to state 103
+
+    mark       go to state 73
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 72
+
+    0 $accept: top $end .
+
+    $default  accept
+
+
+state 73
+
+    4 equation: equation mark .
+
+    $default  reduce using rule 4 (equation)
+
+
+state 74
+
+   15 sqrt_over: sqrt_over OVER . sqrt_over
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    sqrt_over  go to state 104
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 75
+
+   16 sqrt_over: sqrt_over SMALLOVER . sqrt_over
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    sqrt_over  go to state 105
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 76
+
+    9 from_to: sqrt_over TO . from_to
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    from_to    go to state 106
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 77
+
+   10 from_to: sqrt_over FROM . sqrt_over
+   11        | sqrt_over FROM . sqrt_over TO from_to
+   12        | sqrt_over FROM . sqrt_over FROM from_to
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    sqrt_over  go to state 107
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 78
+
+   20 nonsup: simple SUB . nonsup
+   21       | simple SUB . simple SUP script
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    nonsup  go to state 108
+    simple  go to state 109
+
+
+state 79
+
+   18 script: simple SUP . script
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    script  go to state 110
+    nonsup  go to state 37
+    simple  go to state 38
+
+
+state 80
+
+   40 simple: simple ACCENT . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 111
+
+
+state 81
+
+   37 simple: simple BAR .
+
+    $default  reduce using rule 37 (simple)
+
+
+state 82
+
+   38 simple: simple UNDER .
+
+    $default  reduce using rule 38 (simple)
+
+
+state 83
+
+   39 simple: simple PRIME .
+
+    $default  reduce using rule 39 (simple)
+
+
+state 84
+
+   41 simple: simple UACCENT . simple
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    simple  go to state 112
+
+
+state 85
+
+    4 equation: equation . mark
+   56 pile_element_list: equation .
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    $default  reduce using rule 56 (pile_element_list)
+
+    mark       go to state 73
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 86
+
+   57 pile_element_list: pile_element_list . ABOVE equation
+   58 pile_arg: '{' pile_element_list . '}'
+
+    ABOVE  shift, and go to state 113
+    '}'    shift, and go to state 114
+
+
+state 87
+
+   59 pile_arg: number '{' . pile_element_list '}'
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    equation           go to state 85
+    mark               go to state 33
+    from_to            go to state 34
+    sqrt_over          go to state 35
+    script             go to state 36
+    nonsup             go to state 37
+    simple             go to state 38
+    pile_element_list  go to state 115
+
+
+state 88
+
+    4 equation: equation . mark
+   35 simple: LEFT delim equation . RIGHT delim
+   36       | LEFT delim equation .
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    RIGHT        shift, and go to state 116
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    $default  reduce using rule 36 (simple)
+
+    mark       go to state 73
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 89
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   47       | SIZE text simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 47 (simple)
+
+
+state 90
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   46       | FONT text simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 46 (simple)
+
+
+state 91
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   48       | FWD number simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 48 (simple)
+
+
+state 92
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   49       | BACK number simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 49 (simple)
+
+
+state 93
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   51       | DOWN number simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 51 (simple)
+
+
+state 94
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   50       | UP number simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 50 (simple)
+
+
+state 95
+
+   66 column: COL . column_arg
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 117
+
+    number      go to state 118
+    column_arg  go to state 119
+    text        go to state 45
+
+
+state 96
+
+   67 column: LCOL . column_arg
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 117
+
+    number      go to state 118
+    column_arg  go to state 120
+    text        go to state 45
+
+
+state 97
+
+   68 column: RCOL . column_arg
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 117
+
+    number      go to state 118
+    column_arg  go to state 121
+    text        go to state 45
+
+
+state 98
+
+   69 column: CCOL . column_arg
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 117
+
+    number      go to state 118
+    column_arg  go to state 122
+    text        go to state 45
+
+
+state 99
+
+   34 simple: MATRIX '{' column_list . '}'
+   61 column_list: column_list . column
+
+    COL   shift, and go to state 95
+    LCOL  shift, and go to state 96
+    RCOL  shift, and go to state 97
+    CCOL  shift, and go to state 98
+    '}'   shift, and go to state 123
+
+    column  go to state 124
+
+
+state 100
+
+   60 column_list: column .
+
+    $default  reduce using rule 60 (column_list)
+
+
+state 101
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   52       | TYPE text simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 52 (simple)
+
+
+state 102
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   54       | SPECIAL text simple .
+
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 54 (simple)
+
+
+state 103
+
+   29 simple: '{' equation '}' .
+
+    $default  reduce using rule 29 (simple)
+
+
+state 104
+
+   15 sqrt_over: sqrt_over . OVER sqrt_over
+   15          | sqrt_over OVER sqrt_over .
+   16          | sqrt_over . SMALLOVER sqrt_over
+
+    $default  reduce using rule 15 (sqrt_over)
+
+
+state 105
+
+   15 sqrt_over: sqrt_over . OVER sqrt_over
+   16          | sqrt_over . SMALLOVER sqrt_over
+   16          | sqrt_over SMALLOVER sqrt_over .
+
+    $default  reduce using rule 16 (sqrt_over)
+
+
+state 106
+
+    9 from_to: sqrt_over TO from_to .
+
+    $default  reduce using rule 9 (from_to)
+
+
+state 107
+
+   10 from_to: sqrt_over FROM sqrt_over .
+   11        | sqrt_over FROM sqrt_over . TO from_to
+   12        | sqrt_over FROM sqrt_over . FROM from_to
+   15 sqrt_over: sqrt_over . OVER sqrt_over
+   16          | sqrt_over . SMALLOVER sqrt_over
+
+    OVER       shift, and go to state 74
+    SMALLOVER  shift, and go to state 75
+    TO         shift, and go to state 125
+    FROM       shift, and go to state 126
+
+    $default  reduce using rule 10 (from_to)
+
+
+state 108
+
+   20 nonsup: simple SUB nonsup .
+
+    $default  reduce using rule 20 (nonsup)
+
+
+state 109
+
+   19 nonsup: simple .
+   20       | simple . SUB nonsup
+   21       | simple . SUB simple SUP script
+   21       | simple SUB simple . SUP script
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+
+    SUB      shift, and go to state 78
+    SUP      shift, and go to state 127
+    ACCENT   shift, and go to state 80
+    BAR      shift, and go to state 81
+    UNDER    shift, and go to state 82
+    PRIME    shift, and go to state 83
+    UACCENT  shift, and go to state 84
+
+    $default  reduce using rule 19 (nonsup)
+
+
+state 110
+
+   18 script: simple SUP script .
+
+    $default  reduce using rule 18 (script)
+
+
+state 111
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   40       | simple ACCENT simple .
+   41       | simple . UACCENT simple
+
+    $default  reduce using rule 40 (simple)
+
+
+state 112
+
+   37 simple: simple . BAR
+   38       | simple . UNDER
+   39       | simple . PRIME
+   40       | simple . ACCENT simple
+   41       | simple . UACCENT simple
+   41       | simple UACCENT simple .
+
+    $default  reduce using rule 41 (simple)
+
+
+state 113
+
+   57 pile_element_list: pile_element_list ABOVE . equation
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    equation   go to state 128
+    mark       go to state 33
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 114
+
+   58 pile_arg: '{' pile_element_list '}' .
+
+    $default  reduce using rule 58 (pile_arg)
+
+
+state 115
+
+   57 pile_element_list: pile_element_list . ABOVE equation
+   59 pile_arg: number '{' pile_element_list . '}'
+
+    ABOVE  shift, and go to state 113
+    '}'    shift, and go to state 129
+
+
+state 116
+
+   35 simple: LEFT delim equation RIGHT . delim
+
+    TEXT         shift, and go to state 40
+    QUOTED_TEXT  shift, and go to state 41
+    '{'          shift, and go to state 49
+    '}'          shift, and go to state 50
+
+    text   go to state 51
+    delim  go to state 130
+
+
+state 117
+
+   64 column_arg: '{' . column_element_list '}'
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    equation             go to state 131
+    mark                 go to state 33
+    from_to              go to state 34
+    sqrt_over            go to state 35
+    script               go to state 36
+    nonsup               go to state 37
+    simple               go to state 38
+    column_element_list  go to state 132
+
+
+state 118
+
+   65 column_arg: number . '{' column_element_list '}'
+
+    '{'  shift, and go to state 133
+
+
+state 119
+
+   66 column: COL column_arg .
+
+    $default  reduce using rule 66 (column)
+
+
+state 120
+
+   67 column: LCOL column_arg .
+
+    $default  reduce using rule 67 (column)
+
+
+state 121
+
+   68 column: RCOL column_arg .
+
+    $default  reduce using rule 68 (column)
+
+
+state 122
+
+   69 column: CCOL column_arg .
+
+    $default  reduce using rule 69 (column)
+
+
+state 123
+
+   34 simple: MATRIX '{' column_list '}' .
+
+    $default  reduce using rule 34 (simple)
+
+
+state 124
+
+   61 column_list: column_list column .
+
+    $default  reduce using rule 61 (column_list)
+
+
+state 125
+
+   11 from_to: sqrt_over FROM sqrt_over TO . from_to
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    from_to    go to state 134
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 126
+
+   12 from_to: sqrt_over FROM sqrt_over FROM . from_to
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    from_to    go to state 135
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 127
+
+   21 nonsup: simple SUB simple SUP . script
+
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    script  go to state 136
+    nonsup  go to state 37
+    simple  go to state 38
+
+
+state 128
+
+    4 equation: equation . mark
+   57 pile_element_list: pile_element_list ABOVE equation .
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    $default  reduce using rule 57 (pile_element_list)
+
+    mark       go to state 73
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 129
+
+   59 pile_arg: number '{' pile_element_list '}' .
+
+    $default  reduce using rule 59 (pile_arg)
+
+
+state 130
+
+   35 simple: LEFT delim equation RIGHT delim .
+
+    $default  reduce using rule 35 (simple)
+
+
+state 131
+
+    4 equation: equation . mark
+   62 column_element_list: equation .
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    $default  reduce using rule 62 (column_element_list)
+
+    mark       go to state 73
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 132
+
+   63 column_element_list: column_element_list . ABOVE equation
+   64 column_arg: '{' column_element_list . '}'
+
+    ABOVE  shift, and go to state 137
+    '}'    shift, and go to state 138
+
+
+state 133
+
+   65 column_arg: number '{' . column_element_list '}'
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    equation             go to state 131
+    mark                 go to state 33
+    from_to              go to state 34
+    sqrt_over            go to state 35
+    script               go to state 36
+    nonsup               go to state 37
+    simple               go to state 38
+    column_element_list  go to state 139
+
+
+state 134
+
+   11 from_to: sqrt_over FROM sqrt_over TO from_to .
+
+    $default  reduce using rule 11 (from_to)
+
+
+state 135
+
+   12 from_to: sqrt_over FROM sqrt_over FROM from_to .
+
+    $default  reduce using rule 12 (from_to)
+
+
+state 136
+
+   21 nonsup: simple SUB simple SUP script .
+
+    $default  reduce using rule 21 (nonsup)
+
+
+state 137
+
+   63 column_element_list: column_element_list ABOVE . equation
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    equation   go to state 140
+    mark       go to state 33
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 138
+
+   64 column_arg: '{' column_element_list '}' .
+
+    $default  reduce using rule 64 (column_arg)
+
+
+state 139
+
+   63 column_element_list: column_element_list . ABOVE equation
+   65 column_arg: number '{' column_element_list . '}'
+
+    ABOVE  shift, and go to state 137
+    '}'    shift, and go to state 141
+
+
+state 140
+
+    4 equation: equation . mark
+   63 column_element_list: column_element_list ABOVE equation .
+
+    SQRT         shift, and go to state 1
+    LPILE        shift, and go to state 2
+    RPILE        shift, and go to state 3
+    CPILE        shift, and go to state 4
+    PILE         shift, and go to state 5
+    LEFT         shift, and go to state 6
+    SIZE         shift, and go to state 7
+    FONT         shift, and go to state 8
+    ROMAN        shift, and go to state 9
+    BOLD         shift, and go to state 10
+    ITALIC       shift, and go to state 11
+    FAT          shift, and go to state 12
+    TEXT         shift, and go to state 13
+    QUOTED_TEXT  shift, and go to state 14
+    FWD          shift, and go to state 15
+    BACK         shift, and go to state 16
+    DOWN         shift, and go to state 17
+    UP           shift, and go to state 18
+    MATRIX       shift, and go to state 19
+    MARK         shift, and go to state 20
+    LINEUP       shift, and go to state 21
+    TYPE         shift, and go to state 22
+    VCENTER      shift, and go to state 23
+    SPLIT        shift, and go to state 24
+    NOSPLIT      shift, and go to state 25
+    SPECIAL      shift, and go to state 26
+    '^'          shift, and go to state 27
+    '~'          shift, and go to state 28
+    '\t'         shift, and go to state 29
+    '{'          shift, and go to state 30
+
+    $default  reduce using rule 63 (column_element_list)
+
+    mark       go to state 73
+    from_to    go to state 34
+    sqrt_over  go to state 35
+    script     go to state 36
+    nonsup     go to state 37
+    simple     go to state 38
+
+
+state 141
+
+   65 column_arg: number '{' column_element_list '}' .
+
+    $default  reduce using rule 65 (column_arg)
