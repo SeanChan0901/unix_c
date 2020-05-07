@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+// 信号驱动程序
+
 static void int_handler(int s) { write(1, "!", 1); }
 
 int main() {
@@ -19,6 +21,7 @@ int main() {
       sleep(1);
     }
     write(1, "\n", 1);
+    sigsuspend(&old_set);
     sigprocmask(SIG_SETMASK, &old_set, NULL);  // 恢复
   }
   // sigprocmask(SIG_SETMASK, &save_set, NULL);  // 恢复旧状态
