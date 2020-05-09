@@ -6,7 +6,7 @@
 #include <sys/errno.h>
 #include <unistd.h>
 
-#include "mytbf.h"
+#include "mytbf_sa.h"
 
 // 流量控制 ： 令牌桶
 // 任何类型的影音或者音频播放器都会做流控制
