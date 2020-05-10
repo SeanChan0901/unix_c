@@ -4,9 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// IO密集型号的 低负载任务
+
+#define REL_JOBMAX 10000  // 最多有多少job
 enum { STATE_RUNNING = 1, STATE_CANCELED, STATE_OVER };
 
-// job
+// job 
+// 学会部分隐藏和封装，这部分其实就是给用户看的，其实自己并不用
 struct rel_stat_st {
   int state;  // 任务状态
   int fd1;
@@ -40,7 +44,7 @@ int rel_canceljob(int jobID);
 int rel_waitjob(int id, struct rel_stat_st*);
 
 /*
- * 任务收尸
+ * 开始任务
  * return == 0      成功，指定任务状态已返回
  * return ==-EINVAL 失败，参数非法
  *
