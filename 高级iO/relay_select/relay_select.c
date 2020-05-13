@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/select.h>
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
@@ -15,10 +16,11 @@
 
 // 状态机状态
 enum {
-  STATE_R = 1,   // 读态
-  STATE_W = 2,   // 写
-  STATE_Ex = 3,  // 异常态
-  STATE_T = 4    // 结束态
+  STATE_R = 1,  // 读态
+  STATE_W,      // 写
+  STATE_AUTO,
+  STATE_Ex,  // 异常态
+  STATE_T    // 结束态
 };
 
 // 有限状态机
@@ -31,6 +33,8 @@ struct fsm_st {
   char buf[BUF_SIZE];  // 缓冲区
   char* err_str;       // 出错原因
 };
+
+int max(int a, int b) { return a > b ? a : b; };
 
 // 推状态机
 void fsm_driver(struct fsm_st* fsm) {
@@ -97,6 +101,7 @@ void fsm_driver(struct fsm_st* fsm) {
 static void relay(int fd1, int fd2) {
   int fd1_save, fd2_save;      // 文件1的特征
   struct fsm_st fsm12, fsm21;  // 状态机1和2
+  fd_set rset, wset;           // 文件描述符集合
   fd1_save = fcntl(fd1, F_GETFL);
   fcntl(fd1, F_SETFL, fd1_save | O_NONBLOCK);  // 确保是非阻塞打开
   fd2_save = fcntl(fd2, F_GETFL);
@@ -110,9 +115,42 @@ static void relay(int fd1, int fd2) {
   fsm21.dfd = fd1;
 
   while (fsm12.state != STATE_T || fsm21.state != STATE_T) {
-    // 任意一个状态机没有到达终态
-    fsm_driver(&fsm12);  // 推状态机12
-    fsm_driver(&fsm21);  // 推状态机21
+    // 布置监视任务
+    FD_ZERO(&rset);  // 清空结合
+    FD_ZERO(&wset);
+    if (fsm12.state == STATE_R)
+      // 状态机12可读
+      FD_SET(fsm12.sfd, &rset);
+    if (fsm12.state == STATE_W)
+      // 状态机12可写
+      FD_SET(fsm12.dfd, &wset);
+    if (fsm21.state == STATE_R)
+      // 状态机21可读
+      FD_SET(fsm21.sfd, &rset);
+    if (fsm21.state == STATE_W)
+      // 状态机21可写
+      FD_SET(fsm21.dfd, &wset);
+
+    // 监视(阻塞在这)
+    // 如果是读态或者写态才监视，否则无条件直接推
+    if (fsm12.state < STATE_AUTO || fsm21.state < STATE_AUTO) {
+      if (select(max(fd1, fd2) + 1, &rset, &wset, NULL, NULL) < 0) {
+        if (errno == EINTR)
+          // 假错误
+          continue;
+        perror("select()");
+        exit(1);
+      }
+    }
+    // 查看监视结果
+    // 根据监视结果有条件的推动状态机
+    if (FD_ISSET(fsm12.sfd, &rset) || FD_ISSET(fsm12.dfd, &wset) ||
+        fsm12.state > STATE_AUTO)
+      fsm_driver(&fsm12);  // 状态机12的sfd可读，dfd可写 或可无条件推（EX或者T）
+                           // 推状态机12
+    if (FD_ISSET(fsm21.sfd, &rset) || FD_ISSET(fsm21.dfd, &wset) ||
+        fsm21.state > STATE_AUTO)
+      fsm_driver(&fsm21);  // 推状态机21
   }
 
   // 恢复之前的用户状态

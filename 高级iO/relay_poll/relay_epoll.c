@@ -1,10 +1,12 @@
 /*
  *中继模型
  */
+#include <epoll.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/select.h>
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
@@ -15,10 +17,11 @@
 
 // 状态机状态
 enum {
-  STATE_R = 1,   // 读态
-  STATE_W = 2,   // 写
-  STATE_Ex = 3,  // 异常态
-  STATE_T = 4    // 结束态
+  STATE_R = 1,  // 读态
+  STATE_W,      // 写
+  STATE_AUTO,
+  STATE_Ex,  // 异常态
+  STATE_T    // 结束态
 };
 
 // 有限状态机
@@ -31,6 +34,8 @@ struct fsm_st {
   char buf[BUF_SIZE];  // 缓冲区
   char* err_str;       // 出错原因
 };
+
+int max(int a, int b) { return a > b ? a : b; };
 
 // 推状态机
 void fsm_driver(struct fsm_st* fsm) {
@@ -97,6 +102,8 @@ void fsm_driver(struct fsm_st* fsm) {
 static void relay(int fd1, int fd2) {
   int fd1_save, fd2_save;      // 文件1的特征
   struct fsm_st fsm12, fsm21;  // 状态机1和2
+  int epfd;
+  struct epoll_event ev;
   fd1_save = fcntl(fd1, F_GETFL);
   fcntl(fd1, F_SETFL, fd1_save | O_NONBLOCK);  // 确保是非阻塞打开
   fd2_save = fcntl(fd2, F_GETFL);
@@ -109,15 +116,56 @@ static void relay(int fd1, int fd2) {
   fsm21.sfd = fd2;
   fsm21.dfd = fd1;
 
+  // 布置监视内容
+  epfd = epoll_creat(10);
+  if (epfd < 0) {
+    perror("epoll_create()");
+    exit(1);
+  }
+
+  // 为文件描述符加入事件监听
+  ev.events = 0;
+  ev.data.fd = fd1;
+  epoll_ctl(epfd, ADD, fd1, &ev);
+
+  ev.events = 0;
+  ev.data.fd = fd2;
+  epoll_ctl(epfd, ADD, fd2, &ev);
+
   while (fsm12.state != STATE_T || fsm21.state != STATE_T) {
-    // 任意一个状态机没有到达终态
-    fsm_driver(&fsm12);  // 推状态机12
-    fsm_driver(&fsm21);  // 推状态机21
+    // 布置监视内容
+    ev.data.fd = fd1;
+    ev.events = 0;
+    if (fsm12.state == STATE_R) ev.events |= EPOLLIN;
+    if (fsm21.state == STATE_W) ev.events |= EPOLLOUT;
+    epoll_ctl(epfd, EPOLL_CTL_MOD, fd1, &ev);
+
+    ev.data.fd = fd2;
+    ev.events = 0;
+    if (fsm12.state == STATE_W) ev.events |= EPOLLOUT;
+    if (fsm21.state == STATE_R) ev.events |= EPOLLIN;
+    epoll_ctl(epfd, EPOLL_CTL_MOD, fd2, &ev);
+
+    // 可以推自动机
+    if (fsm12.state < STATE_AUTO || fsm21.state < STATE_AUTO) {
+      while (epoll_wait(epfd, &ev, 1, -1)) {
+        if (errno == EINTR) continue;
+        perror("poll()");
+        exit(1);
+      }
+      if (ev.data.fd == fd1 && (ev.events & EPOLLIN) ||
+          ev.data.fd == fd2 && (ev.events & EPOLLOUT) || fsm12.sfd > STATE_AUTO)
+        fsm_driver(&fsm12);
+      if (ev.data.fd == fd2 && (ev.events & EPOLLIN) ||
+          ev.data.fd == fd1 && (ev.events & EPOLLOUT) || fsm21.sfd > STATE_AUTO)
+        fsm_driver(&fsm21);
+    }
   }
 
   // 恢复之前的用户状态
   fcntl(fd1, F_SETFL, fd1_save);
   fcntl(fd2, F_SETFL, fd2_save);
+  close(epfd);
 }
 
 int main() {

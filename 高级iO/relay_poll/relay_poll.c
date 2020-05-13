@@ -3,8 +3,10 @@
  */
 #include <errno.h>
 #include <fcntl.h>
+#include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/select.h>
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
@@ -15,10 +17,11 @@
 
 // 状态机状态
 enum {
-  STATE_R = 1,   // 读态
-  STATE_W = 2,   // 写
-  STATE_Ex = 3,  // 异常态
-  STATE_T = 4    // 结束态
+  STATE_R = 1,  // 读态
+  STATE_W,      // 写
+  STATE_AUTO,
+  STATE_Ex,  // 异常态
+  STATE_T    // 结束态
 };
 
 // 有限状态机
@@ -31,6 +34,8 @@ struct fsm_st {
   char buf[BUF_SIZE];  // 缓冲区
   char* err_str;       // 出错原因
 };
+
+int max(int a, int b) { return a > b ? a : b; };
 
 // 推状态机
 void fsm_driver(struct fsm_st* fsm) {
@@ -97,6 +102,7 @@ void fsm_driver(struct fsm_st* fsm) {
 static void relay(int fd1, int fd2) {
   int fd1_save, fd2_save;      // 文件1的特征
   struct fsm_st fsm12, fsm21;  // 状态机1和2
+  struct pollfd pfd[2];  // 自动初始化？
   fd1_save = fcntl(fd1, F_GETFL);
   fcntl(fd1, F_SETFL, fd1_save | O_NONBLOCK);  // 确保是非阻塞打开
   fd2_save = fcntl(fd2, F_GETFL);
@@ -109,10 +115,34 @@ static void relay(int fd1, int fd2) {
   fsm21.sfd = fd2;
   fsm21.dfd = fd1;
 
+  // 布置监视内容
+  pfd[0].fd = fd1;
+  pfd[1].fd = fd2;
+
   while (fsm12.state != STATE_T || fsm21.state != STATE_T) {
-    // 任意一个状态机没有到达终态
-    fsm_driver(&fsm12);  // 推状态机12
-    fsm_driver(&fsm21);  // 推状态机21
+    // 布置监视内容
+    pfd[0].events = 0;
+    if (fsm12.state == STATE_R) pfd[0].events |= POLLIN;   // fd1可读
+    if (fsm21.state == STATE_W) pfd[0].events |= POLLOUT;  // fd1可写
+
+    pfd[1].events = 0;
+    if (fsm12.state == STATE_W) pfd[1].events |= POLLOUT;  // fd2可写
+    if (fsm21.state == STATE_R) pfd[1].events |= POLLIN;   // fd2可读
+
+    // 可以推自动机
+    if (fsm12.state < STATE_AUTO || fsm21.state < STATE_AUTO) {
+      while (poll(pfd, 2, -1) < 0) {
+        if (errno == EINTR) continue;
+        perror("poll()");
+        exit(1);
+      }
+      if (pfd[0].revents & POLLIN || pfd[1].revents & POLLOUT ||
+          fsm12.sfd > STATE_AUTO)
+        fsm_driver(&fsm12);
+      if (pfd[1].revents & POLLIN || pfd[0].revents & POLLOUT ||
+          fsm21.sfd > STATE_AUTO)
+        fsm_driver(&fsm21);
+    }
   }
 
   // 恢复之前的用户状态
