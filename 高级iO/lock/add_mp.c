@@ -35,7 +35,7 @@ static void* func_add(void* p) {
   fprintf(fp, "%d\n", (atoi(linebuf) + 1));
   fflush(fp);
   lockf(fd, F_ULOCK, 0);
-  fclose(fp);
+  fclose(fp);  // 防止意外解锁
   return NULL;
 }
 
