@@ -2,7 +2,7 @@
 #define _MYPIPE_H
 
 #include <stdlib.h>
-// 管道大小
+// 管道大小 （线程管道）
 #define PIPESIZE 1024
 #define MYPIPE_READER 0x00000001UL  // 位图
 #define MYPIPE_WRITER 0x00000002UL  // 位图
