@@ -30,7 +30,7 @@ int main() {
     printf("MATH = %d\n", rbuf.math);
     printf("CHINESE = %d\n", rbuf.chinese);
   }
-  if (msgctl(msgid, IPC_RVID, NULL) < 0) {
+  if (msgctl(msgid, IPC_RMID, NULL) < 0) {
     perror("msgctl");
     exit(1);
   }

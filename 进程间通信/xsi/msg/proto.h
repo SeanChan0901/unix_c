@@ -9,7 +9,7 @@
 
 #define KEYPATH "/etc/services"
 #define KEYPROJ 'g'  // 表示一个整形（一个ASCII码）
-#define NAMESIZE 1024
+#define NAMESIZE 32
 
 struct msg_st {
   // 数据传输格式
