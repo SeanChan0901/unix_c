@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
   struct sockaddr_in raddr;
 
   // ???????????
-  int size = sizeof(struct msg_st) + strlen(argv[2]);
+  int size = sizeof(struct msg_st) - 1 + strlen(argv[2]);
   sbuf_ptr = malloc(size);
   if (sbuf_ptr == NULL) {
     perror("malloc()");
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   // bind()
 
   // sbuf
-  strcpy(sbuf_ptr->name, "Alan");
+  strcpy(sbuf_ptr->name, argv[2]);
   sbuf_ptr->math = htonl(rand() % 100);
   sbuf_ptr->chinese = htonl(rand() % 100);
 
