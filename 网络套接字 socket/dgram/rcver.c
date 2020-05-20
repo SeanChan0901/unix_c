@@ -30,7 +30,7 @@ int main() {
     perror("bind()");
     exit(1);
   }
-  // 非常重要,一定要填好对端地址，不然第一次传输会失败
+  // 非常重要,一定要填好对端地址长度，告诉它回填的地址有多大，不然第一次传输会地址不对
   raddr_len = sizeof(raddr);
   while (1) {
     recvfrom(sd, &rbuf, sizeof(rbuf), 0, (void *)&raddr, &raddr_len);
