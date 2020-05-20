@@ -2,6 +2,7 @@
 #define PROTO_H
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #define NAMEMAX 512 - 8 - 8
 // 一个UDP包的推荐长度为512个字节，UDP的报头长度为8个字节，math和chinese各占4个字节
 
