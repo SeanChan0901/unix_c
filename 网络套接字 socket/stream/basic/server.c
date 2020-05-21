@@ -35,6 +35,11 @@ int main() {
     perror("socket()");
     exit(1);
   }
+  int val = 1;
+  if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) < 0) {
+    perror("setsockopt()");
+    exit(1);
+  }
 
   // 本端地址的设置
   laddr.sin_family = AF_INET;
