@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   struct ip_mreqn mreq;
   inet_pton(AF_INET, MTGROUP, &(mreq.imr_multiaddr));  // 转化成大整数
   inet_pton(AF_INET, "0.0.0.0", &(mreq.imr_address));
-  mreq.imr_ifindex = if_nametoindex("lo0");
+  mreq.imr_ifindex = if_nametoindex("eth0");
   // 属性设置
   if (setsockopt(sd, IPPROTO_IP, IP_MULTICAST_IF, &mreq, sizeof(mreq)) < 0) {
     perror("setsockopt()");
