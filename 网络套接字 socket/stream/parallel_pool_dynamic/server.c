@@ -96,6 +96,7 @@ static void server_job(int pos) {
     stamp = time(NULL);
     len = snprintf(linebuf, BUFSIZ, FMT_STAMP, (long long)stamp);
     send(client_sd, linebuf, len, 0);
+    sleep(5);
     close(client_sd);
     serverpool[pos].state = STATE_IDEL;  // 完成工作，状态空闲
   }
@@ -119,6 +120,7 @@ static int add_1_server(void) {
   if (pid == 0) {
     // child
     server_job(slot);  // slot号进程开始工作
+    sleep(5);
     exit(1);
   }
   // parent
