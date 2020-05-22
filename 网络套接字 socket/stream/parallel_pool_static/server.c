@@ -6,6 +6,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "proto.h"
 
 // 并发版本，把accept和server——job分开，这样即便server_job需要耗掉时间也不会影响
