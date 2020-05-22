@@ -94,6 +94,7 @@ static void server_loop(int sd) {
     }
     inet_ntop(AF_INET, &raddr.sin_addr, ipstr, IPSTRSIZE);
     printf("[%d]Client:%s:%d\n", getpid(), ipstr, ntohs(raddr.sin_port));
+    server_job(newsd);
     close(newsd);  // 父进程不用
     // parent
   }
