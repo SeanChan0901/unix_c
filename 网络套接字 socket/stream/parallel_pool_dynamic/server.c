@@ -142,8 +142,6 @@ static int del_1_server(void) {
 };
 
 int main() {
-  int sd;
-  int newsd;
   struct sockaddr_in laddr;
 
   sigset_t set, oset;
@@ -219,16 +217,17 @@ int main() {
         add_1_server();  // 增加一个（空闲）进程
       }
     }
-  }
-  // print the pool
-  for (int i = 0; i < MAXCLIENTS; i++) {
-    if (serverpool[i].pid == -1) {
-      putchar(' ');
-    } else if (serverpool[i].state == STATE_IDEL) {
-      putchar('.');
-    } else {
-      putchar('x');
+    // print the pool
+    for (int i = 0; i < MAXCLIENTS; i++) {
+      if (serverpool[i].pid == -1) {
+        putchar(' ');
+      } else if (serverpool[i].state == STATE_IDEL) {
+        putchar('.');
+      } else {
+        putchar('x');
+      }
     }
+    putchar('\n');
   }
   sigprocmask(SIG_SETMASK, &oset, NULL);
   exit(0);
