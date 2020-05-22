@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
   FILE *fp;
   // 一切皆文件，可以讲文件描述符转化为流就可以使用标准IO的所有操纵！！
-  fp = fdopen(sd, "r");
+  fp = fdopen(sd, "r+");
   if (fp == NULL) {
     perror("fopen()");
     exit(1);
