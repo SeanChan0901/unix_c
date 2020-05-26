@@ -11,6 +11,6 @@ struct client_conf_st {
 };
 
 // 默认参数
-extern struct client_conf_st client_conf_st;
+extern struct client_conf_st client_conf;
 
 #endif
