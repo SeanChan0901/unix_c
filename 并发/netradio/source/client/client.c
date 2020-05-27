@@ -6,6 +6,8 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <net/if.h>
+#include <arpa/inet.h>
+#include <errno.h>
 #include <proto.h>
 /*
  * -M --multigroup指定多播组
@@ -19,6 +21,22 @@ struct client_conf_st client_conf = {
     .rcvport = DEFAULT_RECEIVEPORT,
     .multigroup = DEFAULT_MULTIGROUP,
     .player_cmd = DEFAULT_PLAYERCMD,
+};
+
+static ssize_t writen(int fd, const char* buf, size_t buf_len) {
+  int pos = 0;
+  int ret;
+  while (buf_len > 0) {
+    ret = write(fd, buf + pos, buf_len);
+    if (ret < 0) {
+      if (errno == EINTR) continue;
+      perror("write()");
+      return -1;
+    }
+    buf_len -= ret;
+    pos += ret;
+  }
+  return buf_len;
 };
 
 int main(int argc, char* argv[]) {
@@ -97,12 +115,94 @@ int main(int argc, char* argv[]) {
     }
     if (pid == 0) {
       // child 调用解码器
+      close(sd);
+      close(pd[1]);
+      dup2(pd[0], 0);  // 重定向到标准输入
+      if (pd[0] > 0) {
+        close(pd[0]);  // 如果他本身不是标准输入，把它关了
+      }
+      execl("/bin/sh", "sh", "-c", client_conf.player_cmd,
+            NULL);  // 直接用shell来命令
+      perror("execl()");
+      exit(1);
     }
-    // parent 从网络上收包，发送给子进程
-    // 收节目单
-    // 选择频道
-    // 收频道包，发送给子进程
 
+    // parent 从网络上收包，发送给子进程
+
+    // 收节目单
+    struct msg_list_st* msg_list;
+    struct sockaddr_in server_addr;
+    socklen_t ser_len;
+    int chosenchnid;
+    int len;
+    msg_list = malloc(MSG_LIST_MAX);
+    if (msg_list == NULL) {
+      perror("malloc()");
+      exit(1);
+    }
+    while (1) {
+      len = recvfrom(sd, msg_list, MSG_LIST_MAX, 0, (void*)&server_addr,
+                     &ser_len);
+      if (len < sizeof(struct msg_list_st)) {
+        // 包过小
+        fprintf(stderr, "message is too small.\n");
+        continue;
+      }
+      if (msg_list->chnid != LISTCHNID) {
+        // id不正确
+        fprintf(stderr, "chnid is not match");
+      }
+      break;
+    }
+    // 打印节目单并且选择频道
+    struct msg_listentry_st* pos;
+    for (pos = msg_list->entry; (char*)pos < ((char*)msg_list + len);
+         pos = (void*)(((char*)pos) +
+                       ntohs(pos->len))) {  // 单字节往后移动强转为char*
+      printf("channel %d: %s\n", pos->chnid, pos->desc);
+    }
+    free(msg_list);  // 节目单信息已经输出完毕，可以释放了
+    while (1) {
+      int ret = 0;
+      ret = scanf("%d", &chosenchnid);  // 千万要慎重在循环体中使用scanf
+      if (ret != 1) exit(1);            // 如果输入错误直接退出
+    }
+
+    // 收频道包，发送给子进程
+    struct msg_channel_st* msg_channel;
+    msg_channel = malloc(MSG_CHANNEL_MAX);
+    if (msg_channel == NULL) {
+      perror("malloc()");
+      exit(1);
+    }
+
+    struct sockaddr_in raddr;
+    socklen_t raddr_len;
+    while (1) {
+      len = recvfrom(sd, msg_channel, MSG_CHANNEL_MAX, 0, (void*)&raddr,
+                     &raddr_len);
+      if (raddr.sin_addr.s_addr != server_addr.sin_addr.s_addr ||
+          raddr.sin_port != server_addr.sin_port) {
+        // 如果地址都不对（与节目单地址不对）
+        fprintf(stderr, "Ignore : address not match.\n");
+        continue;
+      }
+      if (len < sizeof(struct msg_channel_st)) {
+        // 包长度过小
+        fprintf(stderr, "Ignore : message too small.\n");
+        continue;
+      }
+      if (msg_channel->chnid == chosenchnid) {
+        // 判断是否接收到正确的频道
+        fprintf(stdout, "accept message :%d received.\n", msg_channel->chnid);
+        // 写到管道当中去
+        if (writen(pd[1], msg_channel->data, len - sizeof(chnid_t)) < 0) {
+          exit(1);
+        }
+      }
+    }
+    free(msg_channel);
+    close(sd);
     exit(0);
-    return 0;
   }
+}
