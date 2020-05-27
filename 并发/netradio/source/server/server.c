@@ -3,7 +3,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-
+#include <errno.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include "server_conf.h"
 #include <proto.h>
 
@@ -15,13 +18,15 @@ struct server_conf_st server_conf = {
     .ifname = DEFAULT_IF,
 };
 
+static void daemon_exit(int s) {}
+
 static int daemonzie(void) {
   pid_t pid;
   int fd;
   pid = fork();
   if (pid < 0) {
     // perror("fork()");
-    syslog(LOG_ERR);
+    syslog(LOG_ERR, "fork():%s", sterror(errno));
     return -1;
   }
   if (pid > 0) exit(1);
@@ -29,7 +34,7 @@ static int daemonzie(void) {
     fd = open("/dev/null", O_RDWR);
     if (fd < 0) {
       // perror("open()");
-      syslog(LOG_ERR);
+      syslog(LOG_WARNING, "open():%s", sterror(errno));
       return -2;
     }
     dup2(fd, 0);
@@ -43,6 +48,26 @@ static int daemonzie(void) {
   return 0;
 };
 
+static int socket_init() {
+  int server_sd;
+  server_sd = socket(AF_INET, SOCK_DGRAM, 0);
+  if (server_sd < 0) {
+    syslog(LOG_ERR, "socket():%s", sterror(errno));
+    exit(1);
+  }
+
+  struct ip_mreqn mreq;
+  inet_pton(AF_INET, server_conf.multigroup, mreq.imr_multiaddr);
+  inet_pton(AF_INET, "0.0.0.0", &mreq.imr_address);
+  mreq.imr_ifindex = if_nametoindex(server_conf.ifname);
+  if (etsockopt(server_sd, IPPROTO_IP, IP_MULTICAST_IF, &mreq, sizeof(mreq)) <
+      0) {
+    syslog(LOG_ERR, "setsockopt(IP_MULTICAST_IF):%s", sterror(errno));
+    exit(1);
+  }
+  // bind();
+}
+
 /*
  * -M 指定多播组
  * -P 指定接收端口
@@ -55,6 +80,18 @@ static int daemonzie(void) {
 int main(int argc, char* argv[]) {
   // 命令行分析
   int c;
+
+  struct sigaction sa;
+  sa.sa_handler = daemon_exit;
+  setemptyset(&sa.sa_mask);
+  sigaddset(&sa.sa_mask, SIGQUIT);
+  sigaddset(&sa.sa_mask, SIGINT);
+  sigaddset(&sa.sa_mask, SIGTERM);
+
+  sigaction(SIGTERM, &sa, NULL);
+  sigaction(SIGINT, &sa, NULL);
+  sigaction(SIGQUIT, &sa, NULL);
+
   openlog("netradio", LOG_PID | LOG_PERROR, LOG_DAEMON);
   while (1) {
     c = getopt(argc, argv, "M:P:FD:I:H");
@@ -95,10 +132,14 @@ int main(int argc, char* argv[]) {
     }
   } else if (server_conf.runmode == RUN_FORGROUND) {
   } else {
-    fprintf(stderr, "EINVAL\n");
+    // fprintf(stderr, "EINVAL\n");
+    syslog(LOG_ERR, "EINVAL : server_conf.runmode");
     exit(1);
   }
+
   // SOCKET初始化
+  socket_init();
+
   // 获取频道信息
   // 创建节目单线程
   // 创建频道线程
