@@ -6,8 +6,12 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <syslog.h>
 #include <netinet/in.h>
 #include "server_conf.h"
+#include "medialib.h"
+#include "thread_channel.h"
+#include "thread_list.h"
 #include <proto.h>
 
 struct server_conf_st server_conf = {
@@ -17,6 +21,9 @@ struct server_conf_st server_conf = {
     .runmode = RUN_DAEMON,
     .ifname = DEFAULT_IF,
 };
+
+int server_sd;
+struct sockaddr_in sndaddr;
 
 static void daemon_exit(int s) {}
 
@@ -49,7 +56,6 @@ static int daemonzie(void) {
 };
 
 static int socket_init() {
-  int server_sd;
   server_sd = socket(AF_INET, SOCK_DGRAM, 0);
   if (server_sd < 0) {
     syslog(LOG_ERR, "socket():%s", sterror(errno));
@@ -60,12 +66,17 @@ static int socket_init() {
   inet_pton(AF_INET, server_conf.multigroup, mreq.imr_multiaddr);
   inet_pton(AF_INET, "0.0.0.0", &mreq.imr_address);
   mreq.imr_ifindex = if_nametoindex(server_conf.ifname);
-  if (etsockopt(server_sd, IPPROTO_IP, IP_MULTICAST_IF, &mreq, sizeof(mreq)) <
+  if (setsockopt(server_sd, IPPROTO_IP, IP_MULTICAST_IF, &mreq, sizeof(mreq)) <
       0) {
     syslog(LOG_ERR, "setsockopt(IP_MULTICAST_IF):%s", sterror(errno));
     exit(1);
   }
   // bind();
+
+  sndaddr.sin_family = AF_INET;
+  sndaddr.sin_port = htons(atoi((server_conf.rcvport)));
+  inet_pton(AF_INET, "0.0.0.0", sndaddr.sin_addr.s_addr);
+  return 0;
 }
 
 /*
@@ -141,8 +152,32 @@ int main(int argc, char* argv[]) {
   socket_init();
 
   // 获取频道信息
+  struct medialib_listentry_st* list;
+  int list_size;
+  int err;
+  err = medialib_getchnlist(&list, &list_size);
+  if (err < 0) {
+    syslog(LOG_ERR, "");
+    exit(1);
+  }
+
   // 创建节目单线程
+  err = thread_list_create(list, list_size);
+  if (err < 0) {
+    syslog();
+    exit(1);
+  }
+
   // 创建频道线程
+  for (int i = 0; i < list_size; i++) {
+    err = thread_channel_create(list + i);
+    if (err) {
+      fprintf(stderr, "thread_channel_create():%s\n", strerror(err));
+      exit(1);
+    }
+  }
+
+  syslog(LOG_DEBUG, "%d channel thread create", list_size);
   while (1) pause();
   closelog();
   exit(0);

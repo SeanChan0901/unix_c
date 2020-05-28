@@ -1,6 +1,8 @@
 #ifndef SERVER_CONF_H__
 #define SERVER_CONF_H__
 
+#include <sys/socket.h>
+
 #define DEFAULT_MEDIADIR "/var/media"
 #define DEFAULT_IF "eth0"
 
@@ -15,5 +17,6 @@ struct server_conf_st {
 };
 
 extern struct server_conf_st server_conf;
-
+extern int serversd;
+extern struct sockaddr_in sndaddr;
 #endif
