@@ -6,6 +6,8 @@
 #include <pthread.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <sys/types.h>
 
 #include "server_conf.h"
 #include "thread_channel.h"
@@ -67,7 +69,7 @@ int thread_channel_destory(struct medialib_listentry_st* ptr) {
         return -ESRCH;
       }
       pthread_join(thr_channel[i].tid, NULL);
-      thr_channel[i].chnid == -1;
+      thr_channel[i].chnid = -1;
       return 0;
     }
   }
@@ -84,7 +86,7 @@ int thread_channel_destoryall() {
         return -ESRCH;
       }
       pthread_join(thr_channel[i].tid, NULL);
-      thr_channel[i].chnid == -1;
+      thr_channel[i].chnid = -1;
     }
   }
   return 0;
