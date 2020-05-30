@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
       case 'H':
         printf(
             "usage: %s [--help | -H] [--multiport | -M <multigroup address>] "
-            "[--player | p <mpgplayer>] \n [--port | P <receive port>]",
+            "[--player | p <mpgplayer>] [--port | P <receive port>]\n",
             argv[0]);
         exit(1);
         break;
