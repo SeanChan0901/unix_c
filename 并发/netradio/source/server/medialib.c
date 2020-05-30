@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <glob.h>
+#include <unistd.h>
 #include <syslog.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/uio.h>
 #include "medialib.h"
 #include "mytbf.h"
 #include "server_conf.h"
@@ -45,7 +48,7 @@ static struct channel_context_st *path2entry(const char *path) {
 
   if (fgets(linebuf, LINEBUFSIZE, fp) == NULL) {
     syslog(LOG_INFO, "%s is not a channel dir (Can't get the desc.text)", path);
-    fclose("fp");
+    fclose(fp);
     return NULL;
   }
   fclose(fp);
@@ -102,7 +105,7 @@ int medialib_getchnlist(struct medialib_listentry_st **result, int *resnum) {
   ptr = malloc(sizeof(struct medialib_listentry_st) * globres.gl_pathc);
   if (ptr == NULL) {
     syslog(LOG_ERR, "malloc() error.");
-    exit(1);
+    return -1;
   }
   for (int i = 0; i < globres.gl_pathc; i++) {
     // globres.gl_pathv[i] -> "/var/media/..."
@@ -118,6 +121,7 @@ int medialib_getchnlist(struct medialib_listentry_st **result, int *resnum) {
   *result = realloc(ptr, sizeof(struct medialib_listentry_st) * num);
   if (*result == NULL) {
     syslog(LOG_ERR, "realloc() failed.");
+    return -1;
   }
   *resnum = num;
   return 0;
@@ -126,6 +130,29 @@ int medialib_getchnlist(struct medialib_listentry_st **result, int *resnum) {
 int medialob_freechnlist(struct medialib_listentry_st **ptr) {
   free(ptr);
   return 0;
+}
+
+static int open_next(chnid_t chnid) {
+  for (int i = 0; i < channel[chnid].mp3golb.gl_pathc; i++) {
+    channel[chnid].pos++;
+    if (channel[chnid].pos == channel[chnid].mp3golb.gl_pathc) {
+      channel[chnid].pos = 0;
+      break;
+    }
+    close(channel[chnid].fd);
+    channel[chnid].fd =
+        open(channel[chnid].mp3golb.gl_pathv[channel[chnid].pos], O_RDONLY);
+    if (channel[chnid].fd < 0) {
+      syslog(LOG_WARNING, "media file %s pread():%s",
+             channel[chnid].mp3golb.gl_pathv[channel[chnid].pos],
+             strerror(errno));
+    } else {
+      channel[chnid].offset = 0;
+      return 0;
+    }
+  }
+  syslog(LOG_ERR, "channel %d has no valid mp3 file.", chnid);
+  return -1;
 }
 
 ssize_t media_readchn(chnid_t chnid, void *buf, size_t size) {

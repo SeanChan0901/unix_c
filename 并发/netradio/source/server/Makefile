@@ -4,8 +4,8 @@ LDFLAGS+=-pthread
 
 all:server
 
-client:server.o
-	gcc $^ -o $@ $(CFLAGS)
+server:server.o thread_channel.o thread_list.o mytbf.o medialib.o
+	$(CC) $^ -o $@ $(CFLAGS) $(LDFLAGS)
 
 clean:
 	rm -rf *.o server
