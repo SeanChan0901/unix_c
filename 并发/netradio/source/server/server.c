@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
   int list_size;
   int err;
   err = medialib_getchnlist(&list, &list_size);
-  if (err < 0) {
+  if (err) {
     syslog(LOG_ERR, "medialib_getchnlist():%s.", strerror(errno));
     exit(1);
   }
