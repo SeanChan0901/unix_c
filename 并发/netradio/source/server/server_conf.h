@@ -3,7 +3,7 @@
 
 #include <sys/socket.h>
 
-#define DEFAULT_MEDIADIR "~/media_lib"
+#define DEFAULT_MEDIADIR "/var/media_lib"
 #define DEFAULT_IF "eth0"
 
 enum { RUN_DAEMON = 1, RUN_FORGROUND };
