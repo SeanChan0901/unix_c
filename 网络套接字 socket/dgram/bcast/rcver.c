@@ -27,6 +27,13 @@ int main() {
     perror("socket");
     exit(1);
   }
+
+  // 开启广播
+  int val = 1;
+  if (setsockopt(sd, SO_BROADCAST, SO_BROADCAST, &val, sizeof(val) < 0)) {
+    perror("setsockopt()");
+    exit(1);
+  }
   laddr.sin_family = AF_INET;             // 协议族
   laddr.sin_port = htons(atoi(RCVPORT));  // 哪个端口是给我用的,
   printf("%d\n", laddr.sin_port);

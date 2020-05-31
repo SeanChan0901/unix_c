@@ -12,7 +12,7 @@
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
-    fprintf(stderr, "Usage :%s <ip-address> <name>", argv[0]);
+    fprintf(stderr, "Usage :%s <name>", argv[0]);
     exit(1);
   }
   if (strlen(argv[1]) > NAMEMAX) {
@@ -32,15 +32,16 @@ int main(int argc, char *argv[]) {
   }
 
   sd = socket(AF_INET, SOCK_DGRAM, 0);
+  if (sd < 0) {
+    perror("socker()");
+    exit(1);
+  }
 
+  // 开启广播
   // 属性设置
   int val = 1;  // 为真
   if (setsockopt(sd, SOL_SOCKET, SO_BROADCAST, &val, sizeof(val)) < 0) {
     perror("setsockopt()");
-    exit(1);
-  }
-  if (sd < 0) {
-    perror("socker()");
     exit(1);
   }
   // bind()

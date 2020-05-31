@@ -75,6 +75,7 @@ int main() {
     }
     if (pid == 0) {
       // child
+      close(sd);  // 子进程不用，记得把不用的资源关掉
       inet_ntop(AF_INET, &raddr.sin_addr, ipstr, IPSTRSIZE);
       printf("Client:%s:%d\n", ipstr, ntohs(raddr.sin_port));
       // 接受消息
@@ -82,6 +83,7 @@ int main() {
       close(newsd);
       exit(0);
     }
+    close(newsd);  // 父进程不用
     // parent
   }
   // 关闭连接
