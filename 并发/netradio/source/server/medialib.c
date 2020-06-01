@@ -98,9 +98,7 @@ int medialib_getchnlist(struct medialib_listentry_st **result, int *resnum) {
   for (int i = MINCHNID; i <= MAXCHNID; i++) {
     channel[i].chnid = -1;  // 未启用
   }
-  printf("%s\n", server_conf.media_dir);
   snprintf(path, PATHSIZE, "%s/*", server_conf.media_dir);
-  printf("%s\n", path);
   if (glob(path, 0, NULL, &globres)) {
     return -1;
   }
