@@ -39,6 +39,8 @@ static void* thr_channel_snder(void* ptr) {
       syslog(LOG_ERR, "thread channel [%d] sendto():%s", entry->chnid,
              strerror(errno));
       exit(1);
+    } else {
+      syslog(LOG_DEBUG, "thread channel [%d] sendto():succeed", entry->chnid);
     }
     sched_yield();
   }
