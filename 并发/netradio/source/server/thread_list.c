@@ -26,6 +26,7 @@ static void *thread_list(void *p) {
   totalsize = sizeof(chnid_t);
   for (int i = 0; i < nr_lsit_entry; i++) {
     totalsize += (sizeof(struct msg_listentry_st) + strlen(list_entry[i].desc));
+    printf("count in for 1 :%d\n", i);
   }
   entrylistp = malloc(totalsize);
   if (entrylistp == NULL) {
@@ -43,6 +44,7 @@ static void *thread_list(void *p) {
     entryp->len = htons(size);
     strcpy(entryp->desc, list_entry[i].desc);
     entryp = (void *)(((char *)entryp) + size);
+    printf("count in for 2 :%d\n", i);
   }
 
   while (1) {
