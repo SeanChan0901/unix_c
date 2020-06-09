@@ -93,7 +93,7 @@ int mytbf_fetchtoken(mytbf_t* tbf, int size) {
   struct mytbf_st* me = tbf;
   int n;
   pthread_mutex_lock(&me->mut);
-  while (me->token <= size) pthread_cond_wait(&me->cond, &me->mut);
+  while (me->token <= 0) pthread_cond_wait(&me->cond, &me->mut);
 
   n = min(me->token, size);
   me->token -= n;
