@@ -123,7 +123,7 @@ int medialib_getchnlist(struct medialib_listentry_st **result, int *resnum) {
     syslog(LOG_ERR, "realloc() failed.");
     return -1;
   }
-  *resnum = num;
+  *resnum = num;  // 回填频道数
   return 0;
 }
 

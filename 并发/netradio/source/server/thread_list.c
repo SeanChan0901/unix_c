@@ -61,6 +61,7 @@ static void *thread_list(void *p) {
 int thread_list_create(struct medialib_listentry_st *listp, int nr_entry) {
   int err;
   list_entry = listp;
+  nr_lsit_entry = nr_entry;
   err = pthread_create(&tid_list, NULL, thread_list, NULL);
   if (err) {
     syslog(LOG_ERR, "pthread_create():%s.", strerror(errno));
