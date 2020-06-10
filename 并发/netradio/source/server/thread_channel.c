@@ -34,8 +34,8 @@ static void* thr_channel_snder(void* ptr) {
   sbufp->chnid = entry->chnid;
   while (1) {
     len = media_readchn(entry->chnid, sbufp->data, MAX_DATA);
-    if (sendto(serversd, sbufp, len + sizeof(chnid_t), 0, (void*)&sndaddr,
-               sizeof(sndaddr)) < 0) {
+    if (sendto(serversd, (void*)sbufp, len + sizeof(chnid_t), 0,
+               (void*)&sndaddr, sizeof(sndaddr)) < 0) {
       syslog(LOG_ERR, "thread channel [%d] sendto():%s", entry->chnid,
              strerror(errno));
       exit(1);

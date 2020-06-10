@@ -107,8 +107,10 @@ int medialib_getchnlist(struct medialib_listentry_st **result, int *resnum) {
     syslog(LOG_ERR, "malloc() error.");
     return -1;
   }
+
   for (int i = 0; i < globres.gl_pathc; i++) {
     // globres.gl_pathv[i] -> "/var/media/..."
+		res=NULL;
     res = path2entry(globres.gl_pathv[i]);
     if (res != NULL) {
       syslog(LOG_DEBUG, "path2entry() returned [%d] %s", res->chnid, res->desc);

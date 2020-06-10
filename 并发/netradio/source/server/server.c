@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
 
   // 获取频道信息
   int list_size;
-  int err;
+  int err = 0;
   err = medialib_getchnlist(&list, &list_size);
   if (err) {
     syslog(LOG_ERR, "medialib_getchnlist():%s.", strerror(errno));
@@ -184,7 +184,9 @@ int main(int argc, char* argv[]) {
   }
 
   syslog(LOG_DEBUG, "%d channel thread create", list_size);
-  while (1) pause();
-  closelog();
+  while(1){
+	  pause();
+	}
+	closelog();
   exit(0);
 }
