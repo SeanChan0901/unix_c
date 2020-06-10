@@ -34,9 +34,9 @@ static void* thr_alrm(void* p) {
   while (1) {
     pthread_mutex_lock(&mut_job);
     for (int i = 0; i < MYTBF_MAX; i++) {
-      jobs[i]->token += jobs[i]->cps;
       if (jobs[i] != NULL) {
         pthread_mutex_lock(&jobs[i]->mut);
+        jobs[i]->token += jobs[i]->cps;
         if (jobs[i]->token > jobs[i]->burst) jobs[i]->token = jobs[i]->burst;
         pthread_cond_broadcast(&jobs[i]->cond);
         pthread_mutex_unlock(&jobs[i]->mut);

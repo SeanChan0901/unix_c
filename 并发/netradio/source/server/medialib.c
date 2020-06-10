@@ -34,12 +34,11 @@ static struct channel_context_st *path2entry(const char *path) {
   char pathstr[PATHSIZE];
   char linebuf[LINEBUFSIZE];
   FILE *fp;
-  struct channel_context_st *me;
   static chnid_t curr_id = MINCHNID;
+  struct channel_context_st *me;
 
   strncpy(pathstr, path, PATHSIZE);
   strncat(pathstr, "/desc.text", PATHSIZE);
-
   fp = fopen(pathstr, "r");
   if (fp == NULL) {
     syslog(LOG_INFO, "%s is not a channel dir (Can't find desc.text)", path);
@@ -57,7 +56,6 @@ static struct channel_context_st *path2entry(const char *path) {
     syslog(LOG_ERR, "malloc():%s", strerror(errno));
     return NULL;
   }
-
   me->tbf = mytbf_init(MP3_BITRATE / 8, MP3_BITRATE / 8 * 10);
   if (me->tbf == NULL) {
     syslog(LOG_ERR, "mytbf_init():%s", strerror(errno));
@@ -95,7 +93,7 @@ int medialib_getchnlist(struct medialib_listentry_st **result, int *resnum) {
   int num = 0;     // 解析出来的目录
   struct medialib_listentry_st *ptr;
   struct channel_context_st *res;
-  for (int i = MINCHNID; i <= MAXCHNID; i++) {
+  for (int i = MINCHNID; i < MAXCHNID + 1; i++) {
     channel[i].chnid = -1;  // 未启用
   }
   snprintf(path, PATHSIZE, "%s/*", server_conf.media_dir);
@@ -109,6 +107,7 @@ int medialib_getchnlist(struct medialib_listentry_st **result, int *resnum) {
   }
   for (int i = 0; i < globres.gl_pathc; i++) {
     // globres.gl_pathv[i] -> "/var/media/..."
+    res = NULL;
     res = path2entry(globres.gl_pathv[i]);
     if (res != NULL) {
       syslog(LOG_DEBUG, "path2entry() returned [%d] %s", res->chnid, res->desc);

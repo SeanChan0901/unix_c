@@ -86,7 +86,7 @@ static int socket_init() {
 
   sndaddr.sin_family = AF_INET;
   sndaddr.sin_port = htons(atoi((server_conf.rcvport)));
-  inet_pton(AF_INET, "0.0.0.0", &sndaddr.sin_addr.s_addr);
+  inet_pton(AF_INET, "server_conf.multigroup", &sndaddr.sin_addr.s_addr);
   return 0;
 }
 
@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
 
   // 获取频道信息
   int list_size;
-  int err;
+  int err = 0;
   err = medialib_getchnlist(&list, &list_size);
   if (err) {
     syslog(LOG_ERR, "medialib_getchnlist():%s.", strerror(errno));
