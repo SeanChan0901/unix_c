@@ -29,7 +29,7 @@ static void *thread_list(void *p) {
   }
   entrylistp = malloc(totalsize);
   if (entrylistp == NULL) {
-    syslog(LOG_ERR, "malloc():%s.", strerror(errno));
+    syslog(LOG_ERR, "malloc():%s. ", strerror(errno));
     exit(1);
   }
 
