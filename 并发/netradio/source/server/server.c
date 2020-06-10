@@ -184,7 +184,9 @@ int main(int argc, char* argv[]) {
   }
 
   syslog(LOG_DEBUG, "%d channel thread create", list_size);
-  while (1) pause();
-  closelog();
+  while(1){
+	  pause();
+	}
+	closelog();
   exit(0);
 }

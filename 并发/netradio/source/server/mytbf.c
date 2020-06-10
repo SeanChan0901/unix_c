@@ -32,11 +32,14 @@ static int get_free_pos_unlock(void) {
 
 static void* thr_alrm(void* p) {
   while (1) {
-    pthread_mutex_lock(&mut_job);
     for (int i = 0; i < MYTBF_MAX; i++) {
       if (jobs[i] != NULL) {
         pthread_mutex_lock(&jobs[i]->mut);
+<<<<<<< HEAD
         jobs[i]->token += jobs[i]->cps;
+=======
+				jobs[i]->token += jobs[i]->cps;
+>>>>>>> a169f0e6d3c9eccd9367e3303f09c3048be7ac1d
         if (jobs[i]->token > jobs[i]->burst) jobs[i]->token = jobs[i]->burst;
         pthread_cond_broadcast(&jobs[i]->cond);
         pthread_mutex_unlock(&jobs[i]->mut);
